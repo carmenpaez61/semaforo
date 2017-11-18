@@ -1,0 +1,74 @@
+LIST P=16F877A
+#INCLUDE <p16f877a.INC>    
+    __CONFIG _XT_OSC & _WDT_OFF & _LVP_ON 
+    
+    ; OTRA MANERA DE CONFIGURAR: 
+    ;CONFIGURACION EQU 0x2f42  B'0010111101000010'
+    
+    
+    ORG 0
+    
+    CONSTANTE_1 EQU 0X20
+    CONSTANTE_2 EQU 0X21
+    CONSTANTE_3 EQU 0X22
+    
+    BCF STATUS, RP0
+    BCF STATUS, RP1
+    CLRF PORTB
+    BSF STATUS, RP0
+    
+    MOVLW B'11110000'
+    MOVWF TRISB
+    BCF STATUS, RP0
+  
+INICIO    
+	BSF PORTB, 0; LUZ VERDE
+	CALL RETARDO
+	CALL RETARDO
+	BCF PORTB, 0
+	BSF PORTB, 1;LUZ AMARILLA
+	CALL RETARDO
+	BCF PORTB, 1
+	BSF PORTB, 2;LUZ ROJA
+	CALL RETARDO
+	CALL RETARDO
+	BCF PORTB, 2
+	GOTO INICIO
+	   
+RETARDO
+
+
+
+            MOVLW	.10             ;Inicio: Bloque mas externo
+	    MOVWF	CONSTANTE_3
+
+
+RETARDO_2                           ;Inicio: Bloque intermedio
+
+            MOVLW	.255
+	    MOVWF	CONSTANTE_2
+
+
+
+RETARDO_1                          ;Inicio: Bloque nucleo del retardo
+
+            MOVLW	.192
+	    MOVWF	CONSTANTE_1
+
+CICLO_1
+
+            DECFSZ	CONSTANTE_1
+	    GOTO	CICLO_1
+
+	    DECFSZ	CONSTANTE_2
+            GOTO	RETARDO_1
+
+
+
+            DECFSZ	CONSTANTE_3
+            GOTO	RETARDO_2
+
+
+
+            RETURN
+	    END
